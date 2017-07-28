@@ -137,6 +137,9 @@ public class Game
             case "grab":
                 pickUpItem(command);
                 break;
+            case "drop":
+                dropItem(command);
+                break;
         }
         // else command not recognised.
         return wantToQuit;
@@ -235,25 +238,55 @@ public class Game
         }
         
         String itemName = command.getSecondWord();
-        Item thing = currentRoom.searchFor(itemName);
-        if( carrying == thing ) {
+        if( carrying != null && itemName.equals( carrying.getName() ) ) {
             System.out.println("Uh, you're carrying it already.");
             return false;
         }
+        
+        Item thing = currentRoom.searchFor(itemName);
         if( thing == null ) {
             System.out.println("This item isn't in this room!");
-            return false;
-        }
-        if( carrying != null ) {
-            System.out.println("First drop what you're carrying!");
             return false;
         }
         if( thing.getWeight() > strength ) {
             System.out.println("This item is too heavy!");
             return false;
         }
+        if( carrying != null ) {
+            System.out.println("First drop what you're carrying!");
+            return false;
+        }
         carrying = thing;
         currentRoom.removeItem(thing);
+        
+        return true;
+    }
+
+    
+    /** 
+     * Try to pick an object up. Fails if (1) the object is not in the present room,
+     * (2) if the player is already carrying something or (3) if the object is too heavy
+     * 
+     * @return boolean success
+     */
+    private boolean dropItem(Command command) 
+    {
+        if(!command.hasSecondWord()) {
+            System.out.println("Drop what?");
+            return false;
+        }
+        
+        String itemName = command.getSecondWord();
+        if( carrying == null) {
+            System.out.println("Uh, you're not carrying anything.");
+            return false;
+        }
+        if( ! itemName.equals(carrying.getName()) ) {
+            System.out.println("You're not carrying this object!");
+            return false;
+        }
+        currentRoom.addItem(carrying);
+        carrying = null;
         
         return true;
     }
