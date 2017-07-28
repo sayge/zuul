@@ -21,6 +21,7 @@ public class Game
     private Parser parser;
     private Room currentRoom;
     private Item carrying;
+    private int strength;
         
     /**
      * Create the game and initialise its internal map.
@@ -31,6 +32,7 @@ public class Game
         parser = new Parser();
         
         carrying = null;
+        strength = 10000; // 10 kg
     }
 
     /**
@@ -132,9 +134,9 @@ public class Game
             case "describe":
                 describeItem(command);
                 break;
-            // case "grab":
-                // pickUpItem(command);
-                // break;
+            case "grab":
+                pickUpItem(command);
+                break;
         }
         // else command not recognised.
         return wantToQuit;
@@ -223,10 +225,36 @@ public class Game
      * Try to pick an object up. Fails if (1) the object is not in the present room,
      * (2) if the player is already carrying something or (3) if the object is too heavy
      * 
-     * @return true, if success; false, if failed
+     * @return boolean success
      */
-    // private boolean pickUpItem(Item thing) 
-    // {
-        // return currentRoom.contains(thing) && carrying == null && 
-    // }
+    private boolean pickUpItem(Command command) 
+    {
+        if(!command.hasSecondWord()) {
+            System.out.println("Grab what?");
+            return false;
+        }
+        
+        String itemName = command.getSecondWord();
+        Item thing = currentRoom.searchFor(itemName);
+        if( carrying == thing ) {
+            System.out.println("Uh, you're carrying it already.");
+            return false;
+        }
+        if( thing == null ) {
+            System.out.println("This item isn't in this room!");
+            return false;
+        }
+        if( carrying != null ) {
+            System.out.println("First drop what you're carrying!");
+            return false;
+        }
+        if( thing.getWeight() > strength ) {
+            System.out.println("This item is too heavy!");
+            return false;
+        }
+        carrying = thing;
+        currentRoom.removeItem(thing);
+        
+        return true;
+    }
 }

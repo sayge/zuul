@@ -38,13 +38,21 @@ public class Room
     }
 
     /**
-     * Define an exit from this room.
-     * @param direction The direction of the exit.
-     * @param neighbor  The room to which the exit leads.
+     * Add item to the room
+     * @param object  object to be added
      */
     public void addItem(Item object)
     {
         content.add(object);
+    }
+
+    /**
+     * Remove item from the room
+     * @param object  object to be removed
+     */
+    public void removeItem(Item object)
+    {
+        content.remove(object);
     }
 
     /**
@@ -116,10 +124,10 @@ public class Room
      * 
      * @return a boolean answer
      */
-    // private String contains(Item thing)
-    // {
-        // return content.contains(thing);
-    // }
+    public boolean contains(Item thing)
+    {
+        return content.contains(thing);
+    }
 
     /**
      * Return a string describing the room's exits, for example
