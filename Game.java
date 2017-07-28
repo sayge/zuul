@@ -229,12 +229,18 @@ public class Game
         }
         
         String itemName = command.getSecondWord();
-        Item thing = player.getLocation().searchFor(itemName);
-        if( thing == null ) {
-            System.out.println("This item isn't in this room.");
-            return;
-        }
+        Item thing;
         
+        if( player.hasItem( itemName ) ) {
+            thing = player.onMe();
+        } else {
+            thing = player.getLocation().searchFor(itemName);
+            if( thing == null ) {
+                System.out.println("This item isn't in this room.");
+                return;
+            }
+        }
+                
         System.out.println( thing.getDescription() );
     }
 }

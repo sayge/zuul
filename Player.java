@@ -28,6 +28,15 @@ public class Player
     {
         return currentRoom;
     }
+    
+    public boolean hasItem(String thing)
+    {
+        return( carrying != null && thing.equals(carrying.getName()) );
+    }
+    public Item onMe()
+    {
+        return carrying;
+    }
 
     /** 
      * Try to pick an object up. Fails if (1) the object is not in the present room,
