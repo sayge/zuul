@@ -140,6 +140,9 @@ public class Game
             case "drop":
                 dropItem(command);
                 break;
+            case "scout":
+                lookAround(command);
+                break;
         }
         // else command not recognised.
         return wantToQuit;
@@ -188,6 +191,21 @@ public class Game
     }
 
     /** 
+     * Try to in to one direction. If there is an exit, enter the new
+     * room, otherwise print an error message.
+     */
+    private void lookAround(Command command) 
+    {
+        if(command.hasSecondWord()) {
+            // if there is no second word, we don't know where to go...
+            System.out.println("Look around where???");
+            return;
+        }
+        
+        System.out.println(currentRoom.getLongDescription());
+    }
+
+    /** 
      * "Quit" was entered. Check the rest of the command to see
      * whether we really quit the game.
      * 
@@ -196,7 +214,7 @@ public class Game
     private boolean quit(Command command) 
     {
         if(command.hasSecondWord()) {
-            System.out.println("Quit what?");
+            System.out.println("Quit what???");
             return false;
         }
         else {
