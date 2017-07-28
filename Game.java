@@ -19,20 +19,16 @@
 public class Game 
 {
     private Parser parser;
-    private Room currentRoom;
-    private Item carrying;
-    private int strength;
-        
+    private Player player;
+
     /**
      * Create the game and initialise its internal map.
      */
     public Game() 
     {
-        createRooms();
         parser = new Parser();
-        
-        carrying = null;
-        strength = 10000; // 10 kg
+        player = new Player();
+        createRooms();
     }
 
     /**
@@ -72,7 +68,7 @@ public class Game
 
         office.setExit("west", lab);
 
-        currentRoom = outside;  // start game outside
+        player.setLocation(outside);  // start game outside
     }
 
     /**
@@ -103,7 +99,7 @@ public class Game
         System.out.println("World of Zuul is a new, incredibly boring adventure game.");
         System.out.println("Type 'help' if you need help.");
         System.out.println();
-        System.out.println(currentRoom.getLongDescription());
+        System.out.println(player.getLocation().getLongDescription());
     }
 
     /**
@@ -135,10 +131,10 @@ public class Game
                 describeItem(command);
                 break;
             case "grab":
-                pickUpItem(command);
+                player.pickUpItem(command);
                 break;
             case "drop":
-                dropItem(command);
+                player.dropItem(command);
                 break;
             case "scout":
                 lookAround(command);
@@ -179,14 +175,14 @@ public class Game
         String direction = command.getSecondWord();
 
         // Try to leave current room.
-        Room nextRoom = currentRoom.getExit(direction);
+        Room nextRoom = player.getLocation().getExit(direction);
 
         if (nextRoom == null) {
             System.out.println("There is no door!");
         }
         else {
-            currentRoom = nextRoom;
-            System.out.println(currentRoom.getLongDescription());
+            player.setLocation(nextRoom);
+            System.out.println(player.getLocation().getLongDescription());
         }
     }
 
@@ -202,7 +198,7 @@ public class Game
             return;
         }
         
-        System.out.println(currentRoom.getLongDescription());
+        System.out.println(player.getLocation().getLongDescription());
     }
 
     /** 
@@ -233,79 +229,12 @@ public class Game
         }
         
         String itemName = command.getSecondWord();
-        Item thing = currentRoom.searchFor(itemName);
+        Item thing = player.getLocation().searchFor(itemName);
         if( thing == null ) {
             System.out.println("This item isn't in this room.");
             return;
         }
         
         System.out.println( thing.getDescription() );
-    }
-    
-    /** 
-     * Try to pick an object up. Fails if (1) the object is not in the present room,
-     * (2) if the player is already carrying something or (3) if the object is too heavy
-     * 
-     * @return boolean success
-     */
-    private boolean pickUpItem(Command command) 
-    {
-        if(!command.hasSecondWord()) {
-            System.out.println("Grab what?");
-            return false;
-        }
-        
-        String itemName = command.getSecondWord();
-        if( carrying != null && itemName.equals( carrying.getName() ) ) {
-            System.out.println("Uh, you're carrying it already.");
-            return false;
-        }
-        
-        Item thing = currentRoom.searchFor(itemName);
-        if( thing == null ) {
-            System.out.println("This item isn't in this room!");
-            return false;
-        }
-        if( thing.getWeight() > strength ) {
-            System.out.println("This item is too heavy!");
-            return false;
-        }
-        if( carrying != null ) {
-            System.out.println("First drop what you're carrying!");
-            return false;
-        }
-        carrying = thing;
-        currentRoom.removeItem(thing);
-        
-        return true;
-    }
-
-    
-    /** 
-     * Try to pick an object up. Fails if (1) the object is not in the present room,
-     * (2) if the player is already carrying something or (3) if the object is too heavy
-     * 
-     * @return boolean success
-     */
-    private boolean dropItem(Command command) 
-    {
-        if(!command.hasSecondWord()) {
-            System.out.println("Drop what?");
-            return false;
-        }
-        
-        String itemName = command.getSecondWord();
-        if( carrying == null) {
-            System.out.println("Uh, you're not carrying anything.");
-            return false;
-        }
-        if( ! itemName.equals(carrying.getName()) ) {
-            System.out.println("You're not carrying this object!");
-            return false;
-        }
-        currentRoom.addItem(carrying);
-        carrying = null;
-        
-        return true;
     }
 }
