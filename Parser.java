@@ -43,6 +43,8 @@ public class Parser
         System.out.print("> ");     // print prompt
 
         inputLine = reader.nextLine();
+        if( inputLine.length() == 0 )
+            return new Command(null, null); 
 
         // Find up to two words on the line.
         Scanner tokenizer = new Scanner(inputLine);
