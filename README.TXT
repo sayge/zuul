@@ -1,3 +1,9 @@
+Forked by: Erick Ortiz
+Inital date: 2017-07-28
+
+
+Original README.TXT
+------------------------------------------------------
 Project: zuul-better
 Authors: Michael Kölling and David J. Barnes
 
